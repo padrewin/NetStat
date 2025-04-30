@@ -1,0 +1,33 @@
+name: Build and Archive
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'NetStat.xcodeproj/**'
+      - 'NetStat/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'NetStat.xcodeproj/**'
+      - 'NetStat/**'
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+      
+      - name: Build and Archive
+        run: |
+          xcodebuild -version
+          xcodebuild clean archive \
+            -project NetStat.xcodeproj \
+            -scheme "NetStat" \
+            -configuration Release \
+            -archivePath ${{ github.workspace }}/build/NetStat.xcarchive \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
