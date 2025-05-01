@@ -1,226 +1,225 @@
 import SwiftUI
+import AppKit
+import Foundation
 
 struct NetworkGraphView: View {
     @State private var previousDownloads: [Double] = []
     @State private var previousUploads: [Double] = []
+    
     let downloadSpeeds: [Double]
     let uploadSpeeds: [Double]
     let isOffline: Bool
     
-    // Culorile personalizate
+    // Culori personalizate
     let downloadColor = Color(hex: "#158EFF") // Albastru pentru download
     let uploadColor = Color(hex: "#E779FF")   // Violet pentru upload
     
-    // Forme personalizate pentru barele cu partea plată la mijloc
-    struct CustomPillTop: Shape {
-        func path(in rect: CGRect) -> Path {
-            var path = Path()
-            
-            let width = rect.width
-            let height = rect.height
-            let cornerRadius = min(width / 2, 6) // Raza de rotunjire redusă
-            
-            // Partea de sus rotunjită, partea de jos plată
-            path.move(to: CGPoint(x: 0, y: height))
-            path.addLine(to: CGPoint(x: 0, y: cornerRadius))
-            path.addArc(center: CGPoint(x: cornerRadius, y: cornerRadius),
-                       radius: cornerRadius,
-                       startAngle: .degrees(180),
-                       endAngle: .degrees(270),
-                       clockwise: false)
-            path.addLine(to: CGPoint(x: width - cornerRadius, y: 0))
-            path.addArc(center: CGPoint(x: width - cornerRadius, y: cornerRadius),
-                       radius: cornerRadius,
-                       startAngle: .degrees(270),
-                       endAngle: .degrees(0),
-                       clockwise: false)
-            path.addLine(to: CGPoint(x: width, y: height))
-            path.closeSubpath()
-            
-            return path
-        }
+    // Culori pentru indicatorii de tip pill-shape
+    let uploadBackgroundColor = Color(hex: "#663280") // Fundal violet închis pentru upload
+    let downloadBackgroundColor = Color(hex: "#1B4C8C") // Fundal albastru închis pentru download
+    
+    // Graficul pentru background exact ca în Image 2
+    var graphBackgroundColor: Color {
+        Color(hex: "#232323") // Fundal gri închis
     }
-
-    struct CustomPillBottom: Shape {
-        func path(in rect: CGRect) -> Path {
-            var path = Path()
-            
-            let width = rect.width
-            let height = rect.height
-            let cornerRadius = min(width / 2, 4) // Raza de rotunjire redusă
-            
-            // Partea de jos rotunjită, partea de sus plată
-            path.move(to: CGPoint(x: 0, y: 0))
-            path.addLine(to: CGPoint(x: width, y: 0))
-            path.addLine(to: CGPoint(x: width, y: height - cornerRadius))
-            path.addArc(center: CGPoint(x: width - cornerRadius, y: height - cornerRadius),
-                       radius: cornerRadius,
-                       startAngle: .degrees(0),
-                       endAngle: .degrees(90),
-                       clockwise: false)
-            path.addLine(to: CGPoint(x: cornerRadius, y: height))
-            path.addArc(center: CGPoint(x: cornerRadius, y: height - cornerRadius),
-                       radius: cornerRadius,
-                       startAngle: .degrees(90),
-                       endAngle: .degrees(180),
-                       clockwise: false)
-            path.closeSubpath()
-            
-            return path
-        }
+    
+    var graphGridColor: Color {
+        Color(hex: "#3A3A3A") // Linii grid gri
     }
-
+    
     // Monitorizare pentru schimbări în date
     private func updateHistory() {
-        // Inițializăm istoricul dacă este gol
+        // Asigurăm că avem suficiente date pentru a umple întregul grafic
+        let minDataPoints = 60 // Minim de puncte de date pentru a umple graficul
+        
+        // Logică pentru download - verificăm dacă există activitate reală
+        let hasDownloadActivity = downloadSpeeds.last ?? 0 > 0.001 // Pragul pentru activitate reală
+        
         if previousDownloads.isEmpty && !downloadSpeeds.isEmpty {
-            previousDownloads = downloadSpeeds
+            if hasDownloadActivity {
+                // Inițializăm cu valoarea actuală repetată pentru a umple graficul
+                let initialValue = downloadSpeeds.last ?? 0
+                previousDownloads = Array(repeating: initialValue, count: minDataPoints)
+            } else {
+                // Inițializăm cu zerouri dacă nu există activitate
+                previousDownloads = Array(repeating: 0.0, count: minDataPoints)
+            }
         } else if !downloadSpeeds.isEmpty {
-            // Adăugăm noile valori la istoric și menținem doar ultimele maxBars
-            let newDownloads = previousDownloads + [downloadSpeeds.last!]
-            previousDownloads = Array(newDownloads.suffix(200)) // Păstrăm un istoric mai lung
+            let newValue = hasDownloadActivity ? downloadSpeeds.last! : 0.0
+            // Adăugăm valoarea nouă la începutul array-ului și păstrăm istoricul suficient de lung
+            previousDownloads = [newValue] + previousDownloads.prefix(minDataPoints - 1)
         }
         
+        // Logică pentru upload - verificăm dacă există activitate reală
+        let hasUploadActivity = uploadSpeeds.last ?? 0 > 0.001 // Pragul pentru activitate reală
+        
         if previousUploads.isEmpty && !uploadSpeeds.isEmpty {
-            previousUploads = uploadSpeeds
+            if hasUploadActivity {
+                // Inițializăm cu valoarea actuală repetată pentru a umple graficul
+                let initialValue = uploadSpeeds.last ?? 0
+                previousUploads = Array(repeating: initialValue, count: minDataPoints)
+            } else {
+                // Inițializăm cu zerouri dacă nu există activitate
+                previousUploads = Array(repeating: 0.0, count: minDataPoints)
+            }
         } else if !uploadSpeeds.isEmpty {
-            // Adăugăm noile valori la istoric și menținem doar ultimele maxBars
-            let newUploads = previousUploads + [uploadSpeeds.last!]
-            previousUploads = Array(newUploads.suffix(200)) // Păstrăm un istoric mai lung
+            let newValue = hasUploadActivity ? uploadSpeeds.last! : 0.0
+            // Adăugăm valoarea nouă la începutul array-ului și păstrăm istoricul suficient de lung
+            previousUploads = [newValue] + previousUploads.prefix(minDataPoints - 1)
         }
+        
+        // Debug - verificăm valorile
+        if !previousDownloads.isEmpty {
+            print("Download activity: \(hasDownloadActivity), value: \(downloadSpeeds.last ?? 0)")
+        }
+        if !previousUploads.isEmpty {
+            print("Upload activity: \(hasUploadActivity), value: \(uploadSpeeds.last ?? 0)")
+        }
+    }
+    
+    // Funcție pentru logaritm în baza 10
+    func log10(_ x: Double) -> Double {
+        return log(x) / log(10)
     }
     
     var body: some View {
         VStack(spacing: 4) {
-            // Etichetă sus (upload)
-            HStack {
-                Text(isOffline ? "↑ Offline" : "↑ \(formatSpeed(uploadSpeeds.last ?? 0.0))")
-                    .foregroundColor(isOffline ? .red : uploadColor)
-                    .font(.system(size: 10, weight: .semibold))
-                    .padding(.leading, 6)
-                    .shadow(color: .black.opacity(0.5), radius: 0, x: 0, y: 0)
-                Spacer()
-            }
-
-            // Grafic
-            GeometryReader { geometry in
-                let height = geometry.size.height
-                let width = geometry.size.width
-                let centerY = height / 2
-                let barWidth: CGFloat = 6   // Lățimea barelor redusă
-                let spacing: CGFloat = 3    // Spațiul redus pentru a permite mai multe bare
-                let maxBars = Int(width / (barWidth + spacing))
+            // Indicatoare tip pill-shape în partea de sus
+            HStack(spacing: 0) {
+                // Indicator upload (stânga)
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(isOffline ? .red : uploadColor)
+                    
+                    Text(isOffline ? "Offline" : formatSpeed(uploadSpeeds.last ?? 0.0))
+                        .foregroundColor(.white)
+                        .font(.system(size: 10, weight: .semibold))
+                        .padding(.trailing, 8)
+                }
+                .padding(.vertical, 5)
+                .padding(.horizontal, 8)
+                .background(
+                    Capsule()
+                        .fill(uploadBackgroundColor)
+                )
                 
-                // Calculăm spațierea ajustată pentru a ocupa întreaga lățime disponibilă
-                let adjustedSpacing = (width - CGFloat(maxBars) * barWidth) / max(1, CGFloat(maxBars - 1))
+                Spacer()
+                
+                // Indicator download (dreapta)
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(isOffline ? .red : downloadColor)
+                    
+                    Text(isOffline ? "Offline" : formatSpeed(downloadSpeeds.last ?? 0.0))
+                        .foregroundColor(.white)
+                        .font(.system(size: 10, weight: .semibold))
+                        .padding(.trailing, 8)
+                }
+                .padding(.vertical, 5)
+                .padding(.horizontal, 8)
+                .background(
+                    Capsule()
+                        .fill(downloadBackgroundColor)
+                )
+            }
+            .padding(.horizontal, 6)
 
-                // Actualizăm istoricul
-                let filledDownload = Array(previousDownloads.suffix(maxBars))
-                let filledUpload = Array(previousUploads.suffix(maxBars))
-
-                // Calculăm valorile minime și maxime pentru o scală mai bună
-                let recentMax = (filledDownload + filledUpload).suffix(maxBars).max() ?? 0.1
-                let fallbackMax = (filledDownload + filledUpload).max() ?? 0.1
-                // Folosim o valoare minimă pentru maxValue pentru a evita barele prea mici
-                let maxValue = max(recentMax * 0.7 + fallbackMax * 0.3, 0.1)
-
-                ZStack(alignment: .topLeading) {
+            // Grafic integrat cu coloane "pill-shaped"
+            GeometryReader { geometry in
+                let width = geometry.size.width
+                let height = geometry.size.height
+                let centerY = height / 2
+                
+                // Parametri pentru coloane
+                let columnWidth: CGFloat = 4
+                let spacing: CGFloat = 2.5
+                let totalColumns = Int((width) / (columnWidth + spacing))
+                
+                // Calculăm padding-ul din partea stângă pentru a elimina spațiul gol
+                let leftPadding: CGFloat = 2.0
+                
+                ZStack {
+                    // Fundal
                     Rectangle()
-                        .fill(isOffline ? Color.red.opacity(0.25) : Color.secondary.opacity(0.2))
+                        .fill(graphBackgroundColor)
+                        .frame(width: width, height: height)
+                        .cornerRadius(5)
+                    
+                    // Linii verticale pentru grid - distribuție uniformă
+                    ForEach(0..<totalColumns+1, id: \.self) { i in
+                        Rectangle()
+                            .fill(graphGridColor)
+                            .frame(width: 1, height: height)
+                            .position(x: leftPadding + (CGFloat(i) * (columnWidth + spacing)), y: centerY)
+                    }
+                    
+                    // Linia centrală orizontală
+                    Rectangle()
+                        .fill(graphGridColor)
                         .frame(height: 1)
                         .position(x: width / 2, y: centerY)
-
-                    ForEach(0..<maxBars, id: \.self) { i in
-                        let reversedIndex = maxBars - i - 1
-                        let download = reversedIndex < filledDownload.count ? filledDownload[reversedIndex] : 0
-                        let upload = reversedIndex < filledUpload.count ? filledUpload[reversedIndex] : 0
-                        let standardHeight: CGFloat = centerY * 0.8 // Înălțimea standard
+                    
+                    // Desenăm coloanele integrate "pill-shaped"
+                    ForEach(0..<min(totalColumns, previousDownloads.count), id: \.self) { i in
+                        // Obținem valorile pentru această coloană
+                        let download = i < previousDownloads.count ? previousDownloads[i] : 0
+                        let upload = i < previousUploads.count ? previousUploads[i] : 0
                         
-                        // Poziționăm barele de la dreapta la stânga
-                        let xPos = width - (barWidth / 2 + CGFloat(i) * (barWidth + adjustedSpacing))
+                        // Calculăm înălțimile
+                        let minHeight: CGFloat = 3 // Înălțime minimă pentru vizibilitate
+                        let maxHeight = centerY - 3 // Înălțime maximă pentru a evita suprapunerea
+                        
+                        // Ajustăm scala pentru a obține efectul din imagine - factor mai mare pentru zoom-in
+                        let maxDownload = previousDownloads.max() ?? 1
+                        let maxUpload = previousUploads.max() ?? 1
 
-                        ZStack {
-                            // Bara de upload (partea de sus)
-                            ZStack {
-                                // Conturul gri pentru fiecare bară
-                                CustomPillTop()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1.5)
-                                    .frame(width: barWidth, height: standardHeight)
-                                    .position(x: xPos, y: centerY - standardHeight / 2)
-                                
-                                // Bara colorată pentru traficul activ
-                                // Afișăm întotdeauna o înălțime minimă vizibilă pentru orice valoare > 0
-                                if upload > 0 {
-                                    let fillHeight = CGFloat(upload / maxValue) * centerY
-                                    // Înălțime minimă de 2 pixeli pentru a asigura vizibilitatea
-                                    let adjustedHeight = max(min(fillHeight, standardHeight), 2)
-                                    
-                                    CustomPillTop()
-                                        .fill(uploadColor)
-                                        .frame(width: barWidth, height: adjustedHeight)
-                                        .position(x: xPos, y: centerY - adjustedHeight / 2)
-                                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: adjustedHeight)
-                                }
+                        let scaleDownload = max(download / maxDownload, 0.01) * maxHeight
+                        let scaleUpload = max(upload / maxUpload, 0.01) * maxHeight
+                        
+                        let downloadHeight = download > 0 ? min(max(scaleDownload, minHeight), maxHeight) : 0
+                        let uploadHeight = upload > 0 ? min(max(scaleUpload, minHeight), maxHeight) : 0
+                        
+                        // Calculăm poziția X - barele se desenează de la dreapta la stânga
+                        let xPos = width - leftPadding - (columnWidth / 8) - (CGFloat(i) * (columnWidth + spacing))
+                        
+                        // Desenăm coloana integrată
+                        ZStack(alignment: .center) {
+                            // Partea de upload (partea de sus)
+                            if upload > 0 {
+                                // Pentru bare folosim întotdeauna forma de tip capsulă (pill)
+                                Capsule()
+                                    .fill(uploadColor)
+                                    .frame(width: columnWidth, height: uploadHeight)
+                                    .position(x: xPos, y: centerY - (uploadHeight / 2))
                             }
                             
-                            // Bara de download (partea de jos)
-                            ZStack {
-                                // Conturul gri pentru fiecare bară
-                                CustomPillBottom()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 1.5)
-                                    .frame(width: barWidth, height: standardHeight)
-                                    .position(x: xPos, y: centerY + standardHeight / 2)
-                                
-                                // Bara colorată pentru traficul activ
-                                // Afișăm întotdeauna o înălțime minimă vizibilă pentru orice valoare > 0
-                                if download > 0 {
-                                    let fillHeight = CGFloat(download / maxValue) * centerY
-                                    // Înălțime minimă de 2 pixeli pentru a asigura vizibilitatea
-                                    let adjustedHeight = max(min(fillHeight, standardHeight), 2)
-                                    
-                                    CustomPillBottom()
-                                        .fill(downloadColor)
-                                        .frame(width: barWidth, height: adjustedHeight)
-                                        .position(x: xPos, y: centerY + adjustedHeight / 2)
-                                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: adjustedHeight)
-                                }
+                            // Partea de download (partea de jos)
+                            if download > 0 {
+                                // Pentru bare folosim întotdeauna forma de tip capsulă (pill)
+                                Capsule()
+                                    .fill(downloadColor)
+                                    .frame(width: columnWidth, height: downloadHeight)
+                                    .position(x: xPos, y: centerY + (downloadHeight / 2))
                             }
                         }
                     }
                 }
             }
             .frame(height: 90)
-            .background(Color.gray.opacity(0.15))
-            .cornerRadius(10)
-            // Adăugăm o tranziție pentru toată vedere graficului pentru animații fluide
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: downloadSpeeds)
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: uploadSpeeds)
-
-            // Etichetă jos (download)
-            HStack {
-                Text(isOffline ? "↓ Offline" : "↓ \(formatSpeed(downloadSpeeds.last ?? 0.0))")
-                    .foregroundColor(isOffline ? .red : downloadColor)
-                    .font(.system(size: 10, weight: .semibold))
-                    .padding(.leading, 6)
-                    .shadow(color: .black.opacity(0.5), radius: 0, x: 0, y: 0)
-                Spacer()
+            .animation(.easeInOut(duration: 0.3), value: downloadSpeeds)
+            .animation(.easeInOut(duration: 0.3), value: uploadSpeeds)
+            .onAppear {
+                // Inițializăm istoricul la prima apariție
+                updateHistory()
             }
-        }
-        .padding(.horizontal, 8)
-        .onAppear {
-            // Inițializăm istoricul la prima apariție
-            if previousDownloads.isEmpty && !downloadSpeeds.isEmpty {
-                previousDownloads = downloadSpeeds
+            .onChange(of: downloadSpeeds) {
+                updateHistory()
             }
-            if previousUploads.isEmpty && !uploadSpeeds.isEmpty {
-                previousUploads = uploadSpeeds
+            .onChange(of: uploadSpeeds) {
+                updateHistory()
             }
-        }
-        .onChange(of: downloadSpeeds) { _ in
-            updateHistory()
-        }
-        .onChange(of: uploadSpeeds) { _ in
-            updateHistory()
         }
     }
 }
