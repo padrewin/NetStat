@@ -1,4 +1,4 @@
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/padrewin/NetStat/total?logo=files&logoColor=white&label=Downloads&color=green)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/padrewin/NetStat/total?logo=files&logoColor=white&label=Downloads&color=red)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/padrewin/NetStat/xcode-build.yml?logo=GitHub&label=GitHub%20Build)
 
 # NetStat
