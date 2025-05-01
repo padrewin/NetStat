@@ -30,7 +30,7 @@ struct ContentView: View {
                 uploadSpeeds: speedMonitor.uploadHistory,
                 isOffline: isOffline
             )
-
+            
             Divider()
                 .background(Color.secondary.opacity(0.3))
                 .padding(.top, 4)
