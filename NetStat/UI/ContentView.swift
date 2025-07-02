@@ -1,8 +1,10 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @ObservedObject var netStatus: NetworkStatus
     @StateObject var speedMonitor = NetworkSpeedMonitor()
+    let appDelegate: AppDelegate
 
     var isOffline: Bool {
         if case .offline = netStatus.currentConnection {
@@ -35,6 +37,21 @@ struct ContentView: View {
                 .background(Color.secondary.opacity(0.3))
                 .padding(.top, 4)
 
+            // Open Network Settings
+            Button(action: {
+                appDelegate.openNetworkSettings()
+            }) {
+                HStack {
+                    Text("Open Network Settings")
+                    Spacer()
+                    Text("⌘N")
+                        .foregroundColor(.secondary)
+                }
+                .font(.system(size: 12, weight: .medium))
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.top, 2)
+            
             // Quit
             Button(action: {
                 NSApp.terminate(nil)
@@ -59,20 +76,19 @@ struct ContentView: View {
 extension NetworkStatus {
     var connectionAssetName: String {
         switch currentConnection {
-        case .wifi: return "icon_wifi"
-        case .ethernet: return "icon_ethernet"
-        case .offline: return "icon_offline"
+        case .wifi:      return "icon_wifi"
+        case .ethernet:  return "icon_ethernet"
+        case .hotspot:   return "icon_hotspot"    // ← hotspot image
+        case .offline:   return "icon_offline"
         }
     }
 
     var connectionText: String {
         switch currentConnection {
         case .wifi(let name):
-            if name.lowercased() == "connected" || name.lowercased().contains("unknown") {
-                return "Wi-Fi connection"
-            } else {
-                return "Wi-Fi - \(name)"
-            }
+            return "Wi-Fi – \(name)"
+        case .hotspot(let name):
+            return "Hotspot – \(name)"         // or “Personal Hotspot”
         case .ethernet:
             return "Ethernet connection"
         case .offline:

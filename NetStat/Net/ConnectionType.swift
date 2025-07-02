@@ -2,9 +2,10 @@ import Foundation
 import Network
 import CoreWLAN
 
-enum ConnectionType {
+enum ConnectionType: Equatable {
     case wifi(name: String)
     case ethernet
+    case hotspot(name: String)   // ← new
     case offline
 }
 

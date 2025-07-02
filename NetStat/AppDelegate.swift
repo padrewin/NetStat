@@ -10,7 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let netStatus = NetworkStatus()
-        let contentView = ContentView(netStatus: netStatus)
+        let contentView = ContentView(netStatus: netStatus, appDelegate: self)
         let hostingVC = BlurHostingView(rootView: contentView)
 
         // Status item
@@ -38,21 +38,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
     }
+    
+    /// Opens system network settings
+    @objc func openNetworkSettings() {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
 
+        if version.majorVersion >= 15 || version.majorVersion <= 12 {
+            // Sequoia sau Monterey și mai jos
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.network") {
+                NSWorkspace.shared.open(url)
+            }
+        } else {
+            // Ventura / Sonoma fallback
+            let url = URL(fileURLWithPath: "/System/Applications/System Settings.app")
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
     @objc func togglePopover(_ sender: Any?) {
         guard let button = statusItem.button else { return }
-
+        
         if popover.isShown {
             popover.performClose(nil)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-
+            
             if let popoverWindow = popover.contentViewController?.view.window {
                 popoverWindow.isOpaque = false
                 popoverWindow.backgroundColor = .clear
                 popoverWindow.hasShadow = true
             }
-
+            
             eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
                 self?.popover.performClose(nil)
                 if let monitor = self?.eventMonitor {
