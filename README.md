@@ -8,7 +8,7 @@
 <details>
   <summary>Image Gallery</summary>
 
-![CleanShot 2025-05-01 at 03 52 08@2x](https://github.com/user-attachments/assets/d9e8909e-b4fc-44a5-bef4-70cc79cdc68b)
+![CleanShot 2025-07-07 at 22 09 04@2x](https://github.com/user-attachments/assets/94357572-bdcf-43e6-8c09-c69c3de86a99)
 
 </details>
 
