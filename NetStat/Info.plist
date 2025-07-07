@@ -16,7 +16,7 @@
 
     <!-- Versiunea aplicației -->
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>1.0.1</string>
 
     <!-- Build number -->
     <key>CFBundleVersion</key>
