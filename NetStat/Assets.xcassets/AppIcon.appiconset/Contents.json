@@ -1,61 +1,61 @@
 {
   "images" : [
     {
-      "filename" : "netstaticon_16x16.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__16x16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "netstaticon_32x32.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__32x32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "netstaticon_32x32 1.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__32x32 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "netstaticon_64x64.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__64x64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "netstaticon_128x128.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__128x128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "netstaticon_256x256.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__256x256.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "netstaticon_256x256 1.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__256x256 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "netstaticon_512x512.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__512x512.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "netstaticon_512x512 1.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__512x512 1.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "netstaticon_1024x1024.png",
+      "filename" : "d08d04b5946a45faad63c1bbe50b9f58_Finder_Beta_2__Liquid_Glass__1024x1024x32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
