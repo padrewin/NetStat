@@ -9,6 +9,8 @@
   <summary>Image Gallery</summary>
 
 ![CleanShot 2025-07-07 at 22 09 04@2x](https://github.com/user-attachments/assets/94357572-bdcf-43e6-8c09-c69c3de86a99)
+<img width="704" height="706" alt="CleanShot 2025-08-17 at 12 01 44@2x" src="https://github.com/user-attachments/assets/5583c7de-f699-4b8d-aedb-b53fb5d56684" />
+
 
 </details>
 
