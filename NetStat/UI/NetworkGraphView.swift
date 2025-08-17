@@ -116,8 +116,12 @@ struct NetworkGraphView: View {
         .onDisappear {
             stopUpdateTimer()
         }
-        .onChange(of: downloadSpeeds) { _ in updateSpeeds() }
-        .onChange(of: uploadSpeeds)   { _ in updateSpeeds() }
+        .onChange(of: downloadSpeeds) {
+            updateSpeeds()
+        }
+        .onChange(of: uploadSpeeds) {
+            updateSpeeds()
+        }
     }
 
     private func statusPill(icon: String, value: String, color: Color, isUpload: Bool) -> some View {

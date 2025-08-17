@@ -85,10 +85,10 @@ extension NetworkStatus {
 
     var connectionText: String {
         switch currentConnection {
-        case .wifi(let name):
-            return "Wi-Fi – \(name)"
-        case .hotspot(let name):
-            return "Hotspot – \(name)"         // or “Personal Hotspot”
+        case .wifi:
+            return "Wi-Fi connection"
+        case .hotspot:
+            return "Hotspot connection"         // or “Personal Hotspot”
         case .ethernet:
             return "Ethernet connection"
         case .offline:

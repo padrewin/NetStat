@@ -2,32 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- Numele aplicației -->
-    <key>CFBundleName</key>
-    <string>NetStat</string>
-
-    <!-- Permisiune pentru acces la locație (obligatorie pentru SSID) -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to detect your current Wi-Fi network.</string>
-
-    <!-- Configurat automat de Xcode -->
-    <key>CFBundleIdentifier</key>
-    <string>dev.padrewin.NetStat</string>
-
-    <!-- Versiunea aplicației -->
-    <key>CFBundleShortVersionString</key>
-    <string>1.0.1</string>
-
-    <!-- Build number -->
-    <key>CFBundleVersion</key>
-    <string>1</string>
-
-    <!-- Principal class -->
-    <key>NSPrincipalClass</key>
-    <string>NSApplication</string>
-
-    <!-- Icona aplicației (opțional) -->
-    <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
+	<key>CFBundleName</key>
+	<string>NetStat</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to detect your current Wi-Fi network.</string>
+	<key>CFBundleIdentifier</key>
+	<string>dev.padrewin.NetStat</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.2</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 </dict>
 </plist>
